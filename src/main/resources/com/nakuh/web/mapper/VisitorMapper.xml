@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nakuh.web.mapper.VisitorMapper">
+	<insert
+		 id="insertVisitor" 
+		 parameterType="com.nakuh.web.domain.Visitor" 
+		 flushCache="true"
+		 statementType="PREPARED"
+		 timeout="20">
+	  INSERT INTO VISITOR(VISITID,
+	  						VISITTIME)
+	VALUES(#{visitid},
+		   #{visittime});
+ 
+ </insert>
+ <select id="todayVisitor" resultType="Integer"
+	parameterType="String">
+		SELECT COUNT(*)
+		FROM VISITOR
+		WHERE VISITTIME LIKE #{tvs}
+</select>
+ <select id="yesterdayVisitor" resultType="Integer"
+	parameterType="String">
+		SELECT COUNT(*)
+		FROM VISITOR
+		WHERE VISITTIME LIKE #{tvs}
+</select>
+ <select id="tenbefore" resultType="com.nakuh.web.domain.Visitor"
+	parameterType="com.nakuh.web.domain.Visitor">
+		SELECT COUNT(VISITTIME) visitcount,VISITTIME
+		FROM VISITOR
+		GROUP BY VISITTIME
+		HAVING VISITTIME BETWEEN #{beforevisit} AND #{todayvisit}
+		ORDER BY VISITTIME;
+</select>
+ <select id="ageCount" resultType="com.nakuh.web.domain.Visitor"
+	parameterType="com.nakuh.web.domain.Visitor">
+		select
+		sum(if(date_format(now(),'%Y') - (substring(BIRTH,1,2)+1900) between 109  and 119 , 1, 0)) as tengroup,
+		sum(if(date_format(now(),'%Y') - (substring(BIRTH,1,2)+1900) between 20  and 29 , 1, 0)) as twentygroup,
+		sum(if(date_format(now(),'%Y') - (substring(BIRTH,1,2)+1900) between 30  and 39 , 1, 0)) as thirtygroup,
+		sum(if(date_format(now(),'%Y') - (substring(BIRTH,1,2)+1900) between 40  and 49 , 1, 0)) as fourtygroup,
+		sum(if(date_format(now(),'%Y') - (substring(BIRTH,1,2)+1900) between 50  and 59 , 1, 0)) as fiftygroup,
+		sum(if(date_format(now(),'%Y') - (substring(BIRTH,1,2)+1900) between 60  and 69 , 1, 0)) as sixtygroup
+		from MEMBERS
+
+</select>
+	
+</mapper>

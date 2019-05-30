@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nakuh.web.mapper.ArticleMapper">
+
+<resultMap id="result" type="hashmap">
+  <id property="artnum" column="artnum" />
+  <result property="content" column="content"/>
+  <result property="artdate" column="artdate"/>
+  <result property="artphoto" column="artphoto"/>
+  <result property="mid" column="mid"/>
+  <result property="extension" column="extension"/>
+  <result property="comcount" column="comcount"/>
+  <result property="profilephoto" column="profilephoto"/>
+  <result property="mname" column="mname"/>
+  <result property="artCount" column="artCount"/>
+  <result property="followerCount" column="followerCount"/>
+  <result property="folloingCount" column="folloingCount"/>
+<!-- artnum, content, artdate, artphoto, mid, extension
+					, comcount, profilephoto, mname, artCount, followerCount, folloingCount; -->
+</resultMap>
+<select id="selectArticles" resultType="com.nakuh.web.domain.Article"
+							parameterType="com.nakuh.web.domain.Article">
+			
+SELECT  ROW_NUMBER() over(order by artnum desc) rownum, A.*
+        FROM (SELECT 
+                 artnum,
+                content,
+                artdate,
+                artphoto,
+                mid,
+                extension,
+                (select count(*) from COMMENTS where titleseq like artnum) comcount,
+                (select profilephoto from MEMBERS M WHERE M.MID LIKE ARTICLES.MID) profilephoto
+        FROM ARTICLES
+        WHERE mid LIKE  #{mid}) A
+        LIMIT #{startRow},#{pageSize}
+
+
+</select>
+
+<select id="selectArticlesDetail" resultType="com.nakuh.web.domain.Article" 
+								parameterType="com.nakuh.web.domain.Article"> 
+			SELECT artnum, content, artdate, artphoto, mid, extension, 
+			(select profilephoto from MEMBERS M WHERE M.MID LIKE ARTICLES.MID) profilephoto,
+			(select name from MEMBERS M2 WHERE M2.MID LIKE ARTICLES.MID) mname
+			FROM ARTICLES
+			WHERE artnum LIKE #{artnum}						
+		
+</select>
+<select id="selectArtnum" resultType="com.nakuh.web.domain.Article">
+	SELECT artnum
+	FROM ARTICLES 
+	WHERE artphoto LIKE #{artphoto}
+</select>
+
+<select id="selectAllArticlesList" resultType="com.nakuh.web.domain.Article"
+								parameterType="com.nakuh.web.domain.Article">
+		SELECT  ROW_NUMBER() over(order by artdate desc) rownum, R.*
+		FROM 	(SELECT DISTINCT artnum,content, artdate, 
+				concat(artphoto,'.',extension) as artphoto,
+				F.folloid as mname, F.mid,
+				(SELECT profilephoto FROM MEMBERS WHERE MID LIKE mname) profilephoto,
+				(SELECT COUNT(*) FROM ARTICLES WHERE MID LIKE #{mid}) artcount,
+			   (SELECT COUNT(DISTINCT folloid) FROM FOLLOWERS WHERE MID LIKE #{mid}) folloingCount,
+			   (SELECT COUNT(DISTINCT mid) FROM FOLLOWERS WHERE folloid LIKE #{mid}) followerCount,
+			   (SELECT profilephoto FROM MEMBERS WHERE MID LIKE #{mid}) userpo,
+			   (SELECT GROUP_CONCAT(DISTINCT '#',P.tagname SEPARATOR '.') AS tag
+					FROM POSTTAG P
+					WHERE artseq LIKE artnum) as tag
+						FROM ARTICLES A 
+						JOIN (
+							SELECT * 
+							FROM FOLLOWERS
+							WHERE mid LIKE #{mid}) F
+						ON A.mid LIKE F.folloid ) R  
+			LIMIT #{startRow},#{pageSize}
+</select>
+<select id="countsnavArticle" resultType="com.nakuh.web.domain.Article"
+								parameterType="String">
+			SELECT A.MID MID,(SELECT COUNT(*) FROM ARTICLES WHERE MID LIKE #{value}) AS artcount,
+			 	  (SELECT COUNT(DISTINCT folloid) FROM FOLLOWERS WHERE MID LIKE #{value}) AS folloingCount,
+			 	(SELECT COUNT(DISTINCT mid) FROM FOLLOWERS WHERE folloid LIKE #{value})   AS followerCount
+			FROM MEMBERS A
+			WHERE MID LIKE #{value}; 
+</select>
+
+<select id="countnavArticle" resultType="com.nakuh.web.domain.Article"
+								parameterType="com.nakuh.web.domain.Article">
+SELECT mid, profilephoto,
+	(SELECT COUNT(*) FROM ARTICLES WHERE MID LIKE #{mid}) artcount,
+    (SELECT COUNT(*) FROM FOLLOWERS WHERE MID LIKE #{mid}) followerCount,
+    (SELECT COUNT(*) FROM FOLLOWERS WHERE folloid LIKE #{mid}) folloingCount
+FROM MEMBERS 
+WHERE MID LIKE #{mid}
+</select>
+
+<select id="countArticles" resultType="int"
+								parameterType="com.nakuh.web.domain.Article">
+	SELECT COUNT(*)
+	FROM ARTICLES
+	WHERE MID LIKE #{mid}
+</select>	
+
+<insert id="existsArticle" parameterType="com.nakuh.web.domain.Article" 
+			flushCache="true" statementType="PREPARED" timeout="20">
+			
+	INSERT INTO ARTICLES(artphoto, extension, mid) 
+	VALUES(#{artphoto},#{extension},#{mid})
+
+</insert>
+
+<update id="updateArticle" parameterType="com.nakuh.web.domain.Article" 
+    		flushCache="true" statementType="PREPARED" timeout="20"> 
+	UPDATE ARTICLES 
+	SET content = #{content}, artdate = #{artdate}
+	WHERE artphoto like #{artphoto}
+	 
+</update>
+
+
+
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nakuh.web.mapper.FollowerMapper">
+
+<select id="selectAllFollowersList" resultType="com.nakuh.web.domain.Follower" 
+			parameterType="string">
+		SELECT M.mid folloid, M.name name, M.profilephoto follpphoto, A2.artdate artdate, A2.artnum artnum
+		FROM MEMBERS M 
+			JOIN (SELECT DISTINCT A.mid, A.artnum, A.content, A.artdate
+					FROM ARTICLES A
+				JOIN (SELECT DISTINCT folloid FROM FOLLOWERS WHERE mid like '${value}') F
+					ON A.mid LIKE F.folloid
+					ORDER BY A.artdate DESC) A2
+			ON M.mid LIKE A2.mid
+		GROUP BY M.mid
+		LIMIT 6			
+</select>
+<!-- folloseq,folloid, mid, artdate, artnum, follpphoto , name, follostate -->
+<select id="selectFollowers" resultType="com.nakuh.web.domain.Follower" 
+			parameterType="string">
+	SELECT IFNULL(V.mid, '0') follostate, V2.mid mid, V2.name name, V2.follpphoto follpphoto
+	FROM  (SELECT M.mid mid, M.name name, M.profilephoto follpphoto
+			FROM MEMBERS M
+			JOIN (SELECT DISTINCT folloid, mid
+			FROM FOLLOWERS 
+			WHERE mid LIKE #{mid}) F
+			ON F.folloid LIKE M.mid) V
+			RIGHT JOIN (SELECT M2.mid mid, M2.name name, M2.profilephoto follpphoto, F2.folloid
+							FROM MEMBERS M2
+							JOIN (SELECT DISTINCT mid, folloid
+							FROM FOLLOWERS 
+							WHERE folloid LIKE #{mid}) F2
+							ON F2.mid LIKE M2.mid) V2
+			ON V.mid LIKE V2.mid
+</select>
+<select id="selectFollowing" resultType="com.nakuh.web.domain.Follower" 
+			parameterType="string">
+SELECT M.mid mid, M.name name, M.profilephoto follpphoto
+FROM MEMBERS M
+	JOIN (SELECT DISTINCT folloid, mid
+			FROM FOLLOWERS 
+			WHERE mid LIKE #{mid}) F
+	ON F.folloid LIKE M.mid
+</select>
+<select id="selectFollower" resultType="com.nakuh.web.domain.Follower" 
+			parameterType="com.nakuh.web.domain.Follower">
+
+       SELECT CASE WHEN FOLLOID = #{folloid} THEN '1' ELSE '0' END AS  follostate, FOLLOID, M.MID, NAME, M.PROFILEPHOTO follpphoto
+        FROM (SELECT *
+           FROM FOLLOWERS 
+           WHERE FOLLOID LIKE #{folloid}) F RIGHT JOIN
+              (SELECT *
+              FROM MEMBERS
+              WHERE mid like '%${mid}%') M ON F.MID LIKE M.MID		
+		
+</select>
+
+<insert id="insertFollower" parameterType="com.nakuh.web.domain.Follower">
+			
+	INSERT INTO FOLLOWERS(mid, folloid) VALUES(#{mid},#{folloid})
+
+</insert>
+<delete id="deleteFollower"  parameterType="com.nakuh.web.domain.Follower">
+	DELETE FROM FOLLOWERS WHERE folloid LIKE #{folloid} AND mid LIKE #{mid};
+</delete>
+
+
+
+
+</mapper>

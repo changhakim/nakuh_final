@@ -1,0 +1,295 @@
+@charset "UTF-8";
+.vdosection{
+  position: relative;
+  /* background-color: #500000; */
+  height: 30vh;
+  min-height: 35rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.vdosection video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: 30%;
+  z-index: 0;
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.vdosection .container {
+  position: relative;
+  z-index: 2;
+}
+
+.vdosection .overlay-wcs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0.5;
+  z-index: 1;
+}
+/* .boxin {
+	position:relative;
+	z-index:2;
+}
+.boxin h3 { 
+	font-size:40px;
+	color:#fff;
+	font-family: 'Roboto', sans-serif; 
+	font-weight:300;
+}
+.boxin > p {
+	display:block;
+}
+.boxin > p { 
+	font-size:14px;
+	color:#fff;
+	font-weight:normal;
+	margin-top:30px;
+	padding-top:30px;
+	line-height:22px;	
+	height:140px;
+	position:relative;
+	display:none;
+}
+.maskBg { 
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:3000px;
+	background-color: rgba(0, 0, 0, 0.65);
+	z-index:1;
+	display:none;
+}
+.boxin > p:after { 
+	content:"";
+	display:block;
+	width:40px;
+	height:1px;
+	background:#fff;
+	position:absolute;
+	top:0;
+	left:50%;
+	margin-left:-20px;
+}
+.box:hover .videoBgs , 
+.box:hover .maskBg { 
+	display:block;
+}
+.box:hover .worksLink:hover { 
+	background-color: rgba(225, 225, 225, 0.3);
+}*/
+
+/* .videoBgs { 	  
+	-webkit-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -o-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    position: relative;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+	display:none;
+} */
+/*
+.videoArea { 
+	position:absolute;
+	top:0;
+	left:0;
+}*/
+/* .fullscreen-bg { 
+	position: relative;
+    background-size: cover;
+    background-position: 50% 50%;
+    width: 100%;
+    height: 0;
+    z-index: 0;
+} */
+/*
+#box01 { 
+	background:url('../img/homeimg/main/oceanimg.JPG') no-repeat 50%;
+	background-size:cover;
+} 
+#box02 { 
+	background:url('../img/homeimg/main/freshwaterimg.JPG') no-repeat 50%;
+	background-size:cover;
+}
+#box03 { 
+	background:url('../img/homeimg/main/hotelimg.JPG') no-repeat 50%;
+	background-size:cover;
+} */
+/* .worksLink { 
+	display:inline-block;
+	height:40px;
+	line-height:40px;
+	width:40px;
+	border:1px solid #fff;	
+	margin-top:50px;
+	font-size:0;
+	background:url('../img/homeimg/main/link_icons_w.png') no-repeat 50%;	
+}
+.box:hover .worksLink { 
+	font-size:14px;
+	color:#fff;
+	width:auto;
+	border:1px solid #fff;	
+	padding:0 40px 0 20px;	
+	background:url('../img/homeimg/main/link_icons_w.png') no-repeat right 10px top 50%;
+	-webkit-transition: 0.4s;
+	transition: 0.4s;
+}
+.box:hover .worksLink:hover { 
+	background-color: rgba(225, 225, 225, 0.3);
+} */
+/* .moveimg{
+	background-size: cover;
+} */
+#loginbar{
+	z-index:9999;
+	position: fixed;
+	overflow: auto;
+}
+#loginbtn{
+  
+}
+
+/* Full-width input fields */
+#userid, #password {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+#login {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 3px;
+}
+
+#login:hover {
+  
+}
+
+
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+span.psw1 {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 9999; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 20%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close1 {
+  position: absolute;
+  right: 25px;
+  top: -20px;
+  color: #000;
+  font-size: 35px;
+  font-weight: bold;
+}
+
+.close1:hover,
+.close1:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)} 
+  to {-webkit-transform: scale(1)}
+}
+  
+@keyframes animatezoom {
+  from {transform: scale(0)} 
+  to {transform: scale(1)}
+}
+#kakao{
+	width:100%;
+	border:0;
+	outline:0;
+	background-color: transparent;
+}
+
+
+.thumb{
+   cursor: pointer;
+}
+
+/* .navvideo{
+    float: left;
+    position: relative;
+    width: 50%;
+    height: auto;
+    opacity: 1;
+    transition: all 300ms cubic-bezier(0.645, 0.045, 0.355, 1.000); 
+} */
+.navvideo{
+	position: relative; 
+	padding-bottom: 56.25%; 
+	height: 0; 
+	overflow: hidden; 
+	max-width: 100%;
+}
+
+.navvideo:hover{
+    opacity: 0.5;
+    transition: all 300ms cubic-bezier(0.645, 0.045, 0.355, 1.000);
+}

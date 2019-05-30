@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nakuh.web.mapper.ReservationMapper">
+
+
+<!-- 상품 예약하기 -->
+	<insert id="insertReservation" parameterType="com.nakuh.web.domain.Reservation">
+	
+	INSERT INTO RESERVATION (
+	STARTDATE, RESNAME, MID, PHONE, RESDATE, RESCOUNT, DEPOSIT,PRONUM,COMPANY,PRONAME) VALUES(
+	#{startdate},#{resname},#{mid},#{phone},#{resdate},#{rescount},#{deposit},#{pronum}, #{company},#{proname})
+	
+	</insert>
+	
+<!-- 마이페이지 : 예약한 상품 조회  -->
+	<select id="selectSomeReservations" resultType="com.nakuh.web.domain.Reservation"
+								  		parameterType="com.nakuh.web.domain.Reservation">
+	SELECT RESNUM resnum, MID mid, RESNAME resname, STARTDATE startdate, AMPM ampm, PHONE phone,
+	RESDATE resdate, RESCOUNT rescount, DEPOSIT deposit,PRONAME proname, COMPANY company,PROIMG proimg
+	FROM RESSEARCH 
+	WHERE MID LIKE #{mid}
+	
+	</select>
+	
+<select id="selectpageReservations" resultType="com.nakuh.web.domain.Reservation"
+    parameterType="com.nakuh.web.cmm.Proxy">
+    SELECT ROW_NUMBER() over(order by resnum desc) as rownum,A.*
+    FROM (SELECT R.resnum,R.mid,R.resname,P.company,P.proname,R.startdate,R.ampm,R.phone,R.resdate,R.deposit,P.category
+            FROM RESERVATION R JOIN PRODUCTS P ON
+            R.pronum = P.pronum) A
+    limit #{startRow},#{pageSize};
+    </select>
+	
+	<select id="countReservation" resultType="Integer">
+	  SELECT COUNT(*)
+  	  FROM RESERVATION	
+	</select>
+	<select id="countSearchReservation" resultType="Integer" 
+	parameterType="com.nakuh.web.cmm.Proxy">
+	SELECT COUNT(*)  
+	FROM (SELECT *
+		  FROM RESSEARCH
+	   	  WHERE concat(RESNUM, MID, RESNAME,PRONAME,STARTDATE,RESDATE,CATEGORY,COMPANY) regexp #{searchword}) R
+	<choose>
+    <when test="resselect =='' and proselect !='' ">
+     WHERE  CATEGORY LIKE #{proselect} 
+     </when>
+     <when test="resselect =='출발날짜' and proselect !='' ">
+     WHERE  STARTDATE LIKE #{searchdate} AND CATEGORY LIKE #{proselect}
+     </when>
+      <when test="resselect =='예약날짜' and proselect !='' ">
+     WHERE  RESDATE LIKE #{searchdate} AND CATEGORY LIKE #{proselect} 
+     </when>
+     <when test="resselect =='출발날짜' and proselect =='' ">
+     WHERE  STARTDATE LIKE #{searchdate} 
+     </when>
+     <when test="resselect =='예약날짜' and proselect =='' ">
+     WHERE  RESDATE LIKE #{searchdate}
+     </when>
+ 	</choose>	 
+	</select>
+	<select id="adminSearchReservation" resultType="com.nakuh.web.domain.Reservation" 
+	parameterType="com.nakuh.web.cmm.Proxy">
+	SELECT @ROWNUM:=@ROWNUM+1 AS rownum,R.*  
+	FROM (SELECT *
+		  FROM RESSEARCH
+	   	  WHERE concat(RESNUM, MID, RESNAME,PRONAME,STARTDATE,RESDATE,CATEGORY,COMPANY) regexp #{searchword}) R,(SELECT @ROWNUM:=0) TMP
+	<choose>
+    <when test="resselect =='' and proselect !='' ">
+     WHERE  CATEGORY LIKE #{proselect} 
+     </when>
+     <when test="resselect =='출발날짜' and proselect !='' ">
+     WHERE  STARTDATE LIKE #{searchdate} AND CATEGORY LIKE #{proselect}
+     </when>
+      <when test="resselect =='예약날짜' and proselect !='' ">
+     WHERE  RESDATE LIKE #{searchdate} AND CATEGORY LIKE #{proselect} 
+     </when>
+     <when test="resselect =='출발날짜' and proselect =='' ">
+     WHERE  STARTDATE LIKE #{searchdate} 
+     </when>
+     <when test="resselect =='예약날짜' and proselect =='' ">
+     WHERE  RESDATE LIKE #{searchdate}
+      </when>
+ 	</choose>
+ 	ORDER BY rownum
+	LIMIT #{startRow},#{pageSize}	 
+	</select>
+	<select id="resCateTerm" resultType="com.nakuh.web.domain.Reservation"
+	parameterType="com.nakuh.web.domain.Visitor">
+	SELECT R.RESDATE,
+		SUM(CASE WHEN R.CATEGORY='ocean' THEN 1 ELSE 0 END) AS ocean,
+		SUM(CASE WHEN R.CATEGORY='river' THEN 1 ELSE 0 END) AS river,
+		SUM(CASE WHEN R.CATEGORY='hotel' THEN 1 ELSE 0 END) AS hotel
+	FROM (SELECT RESDATE,CATEGORY
+			FROM RESSEARCH
+			WHERE RESDATE BETWEEN #{beforevisit} AND #{todayvisit}) R
+	GROUP BY RESDATE;
+	</select>
+	<select id="resCateCount" resultType="com.nakuh.web.domain.Reservation">
+		SELECT category,COUNT(category) rescount
+		FROM RESSEARCH
+		GROUP BY category	
+	</select>
+
+	
+</mapper>

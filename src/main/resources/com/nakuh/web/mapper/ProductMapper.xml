@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nakuh.web.mapper.ProductMapper">
+
+<!-- 전체 상품 조회  -->
+	<select id="selectAllProduct" resultType="com.nakuh.web.domain.Product"
+								  parameterType="com.nakuh.web.domain.Product">
+	
+	SELECT 
+		PRONUM pronum, 
+		PRONAME proname, 
+		PRICE price, 
+		COMPANY company, 
+		ADDRESS address, 
+		CATEGORY category, 
+		PROIMG proimg, 
+		REGIDATE regidate,
+		FISHNAME fishname,
+		PHONE phone,
+		LAT lat,
+		LNG lng
+	FROM PRODUCTS								  
+	</select>
+	
+<!--  카테고리별 상품 조회 -->
+	<select id="selectCateProducts" resultType="com.nakuh.web.domain.Product"
+									parameterType="com.nakuh.web.domain.Product">
+
+	SELECT  ROW_NUMBER() over(
+	<choose>
+	 <when test="pricetitle =='높은가격순'">
+     	ORDER BY price*1 DESC
+     </when>
+     <when test="pricetitle =='낮은가격순'">
+     	ORDER BY price*1 ASC
+     </when>
+     <otherwise>
+      order by pronum desc
+    </otherwise>
+ 	</choose>	
+	) rownum, P.*
+	FROM	(SELECT 
+			PRONUM pronum, 
+			PRONAME proname, 
+			PRICE price, 
+			COMPANY company, 
+			ADDRESS address, 
+			CATEGORY category, 
+			PROIMG proimg, 
+			REGIDATE regidate,
+			FISHNAME fishname,
+			PHONE phone,
+			LAT lat,
+			LNG lng
+		FROM PRODUCTS 
+		WHERE CATEGORY LIKE #{category} <choose><when test="searchword != '' and searchword != null ">AND concat(COMPANY,PRICE,FISHNAME) regexp #{searchword}</when></choose> 
+		GROUP BY company
+		HAVING price LIKE min(price)
+		) P
+	 	<choose>
+     	<when test="areatitle !='지역' and areatitle !=null and pricetitle !=null ">
+     	WHERE  ADDRESS LIKE '%${areatitle}%'
+     	</when>
+     	</choose>
+		LIMIT #{startRow},#{pageSize}
+		
+	</select>
+		
+<!-- 일부 상품 조회 --> 
+	<select id="selectSomeProducts" resultType="com.nakuh.web.domain.Product"
+									parameterType="com.nakuh.web.domain.Product">
+	SELECT 
+		PRONUM pronum, 
+		PRONAME proname, 
+		PRICE price, 
+		COMPANY company, 
+		ADDRESS address, 
+		CATEGORY category, 
+		PROIMG proimg, 
+		REGIDATE regidate,
+		FISHNAME fishname,
+		PHONE phone,
+		LAT lat,
+		LNG lng
+	FROM PRODUCTS 
+	WHERE company LIKE '%${proname}%' or address LIKE '%${proname}%'
+
+	</select>
+
+<!-- 선택한 상품 상세 조회 -->
+	<select id="selectProducts" resultType="com.nakuh.web.domain.Product"
+							   parameterType="com.nakuh.web.domain.Product">
+	SELECT  
+		PRONUM pronum, 
+		PRONAME proname, 
+		PRICE price, 
+		COMPANY company, 
+		ADDRESS address, 
+		CATEGORY category, 
+		PROIMG proimg, 
+		REGIDATE regidate,
+		FISHNAME fishname,
+		PHONE phone,
+		LAT lat,
+		LNG lng
+	FROM PRODUCTS 
+	WHERE COMPANY LIKE #{company}
+	
+	</select>
+	
+	<select id="selectProduct" resultType="com.nakuh.web.domain.Product"
+							   parameterType="com.nakuh.web.domain.Product">
+	SELECT  
+		PRONUM pronum, 
+		PRONAME proname, 
+		PRICE price, 
+		COMPANY company, 
+		ADDRESS address, 
+		CATEGORY category, 
+		PROIMG proimg, 
+		REGIDATE regidate,
+		FISHNAME fishname,
+		PHONE phone,
+		LAT lat,
+		LNG lng
+	FROM PRODUCTS 
+	WHERE COMPANY LIKE #{company}
+	GROUP BY company
+	HAVING price LIKE min(price) 
+	
+	</select>
+
+</mapper>
