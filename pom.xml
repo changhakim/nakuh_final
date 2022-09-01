@@ -24,7 +24,7 @@
 		<jaxb-impl-version>2.1</jaxb-impl-version>
 		<jackson-mapper-asl-version>1.9.13</jackson-mapper-asl-version>
 		<json-lib-version>2.4</json-lib-version>
-		<org-jsoup-version>1.11.2</org-jsoup-version>
+		<org-jsoup-version>1.15.3</org-jsoup-version>
 	</properties>
 	<dependencies>
 		<dependency>
